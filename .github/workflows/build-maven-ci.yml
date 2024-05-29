@@ -59,7 +59,7 @@ jobs:
     name: Package versioning
     uses: MuZikZz-Org/action-workflow/.github/workflows/package-versioning.yaml@main
     with:
-      Runtime: java
+      Runtime: java 
 
   OUTPUT_PackageVersioning:
     runs-on: runner-utility
