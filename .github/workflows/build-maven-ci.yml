@@ -69,10 +69,10 @@ jobs:
       - run: |
           echo "Package Output form Workflow PackageVersioning: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION }}"
 
-  Maven_Build:
-    needs: env_workflow
-    name: Build Maven Package
-    uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
+  # Maven_Build:
+  #   needs: env_workflow
+  #   name: Build Maven Package
+  #   uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
 
   # Build_Docker_ACR:
   #   needs: env_workflow
