@@ -69,7 +69,7 @@ jobs:
   Maven_Build:
     needs: env_workflow
     name: Build Maven Package
-    use: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
+    uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
 
   Build_Docker_ACR:
     needs: env_workflow
