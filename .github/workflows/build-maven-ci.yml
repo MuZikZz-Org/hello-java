@@ -3,10 +3,10 @@ name: FeatureBranch Workflow Nodejs.
 on:
   workflow_dispatch:
   push:
-    branches: #[ "main" ]
+    branches: #[ $default-branch ]
       - 'feature/**'
   # pull_request:
-  #   branches: [ "main" ]
+  #   branches: [ $default-branch ]
   
 
 env: 
@@ -54,17 +54,19 @@ jobs:
     name: "Calling workflow Azure login with managed identity"
     uses: MuZikZz-Org/action-workflow/.github/workflows/az-authen-iden-selfhosted.yaml@main
 
-  # Package_Versioning:
-  #   needs: env_workflow
-  #   name: Package versioning
-  #   uses: MuZikZz-Org/action-workflow/.github/workflows/package-versioning.yaml@main
+  Package_Versioning:
+    needs: env_workflow
+    name: Package versioning
+    uses: MuZikZz-Org/action-workflow/.github/workflows/package-versioning.yaml@main
+    with:
+      Runtime: java
 
-  # OUTPUT_PackageVersioning:
-  #   runs-on: runner-utility
-  #   needs: Package_Versioning
-  #   steps:
-  #     - run: |
-  #         echo "Package Output form Workflow PackageVersioning: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION }}"
+  OUTPUT_PackageVersioning:
+    runs-on: runner-utility
+    needs: Package_Versioning
+    steps:
+      - run: |
+          echo "Package Output form Workflow PackageVersioning: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION }}"
 
   Maven_Build:
     needs: env_workflow
