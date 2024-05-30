@@ -75,7 +75,7 @@ jobs:
     uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
 
   Build_Docker_ACR:
-    needs: env_workflow
+    needs: [env_workflow,Package_Versioning]
     name: "Build Docker to ACR"
     uses: MuZikZz-Org/action-workflow/.github/workflows/docker-build-acr.yaml@main
     with:
@@ -125,7 +125,7 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   
   Git_tag:
-    needs: Build_Docker_ACR
+    needs: Deploy_helm
     name: "Pushing git tag"
     uses: MuZikZz-Org/action-workflow/.github/workflows/git-push-tag.yaml@main
     with:
