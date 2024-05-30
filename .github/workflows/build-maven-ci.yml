@@ -64,6 +64,7 @@ jobs:
     with:
       Runtime: java 
       JobEnvironment: ${{needs.env_workflow.outputs.JobEnvironment}}  #feature-branch 
+      workspace: ${{needs.env_workflow.outputs.Workspace_Dir}}
 
   OUTPUT_PackageVersioning:
     runs-on: runner-utility
@@ -89,8 +90,7 @@ jobs:
       APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
       AZ_CONTAINER_REGISTRY: ${{needs.env_workflow.outputs.AZ_CONTAINER_REGISTRY}}
       AZ_CONTAINER_NAME: ${{needs.env_workflow.outputs.AZ_CONTAINER_NAME}}
-    secrets: #inherit # pass all secrets into reuse-workflow
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+    #secrets: inherit # pass all secrets into reuse-workflow
       
   TEST_CALL_OUTPUT:
     runs-on: runner-utility
@@ -110,8 +110,6 @@ jobs:
       AZURE_CONTAINER_NAME: ${{needs.env_workflow.outputs.BLOB_CONTAINER_NAME}}
       APP_NAME: ${{github.event.repository.name}}
       APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
-    secrets: #inherit
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
  
   Deploy_helm:  ## now use Helm values form https://github.com/brightza008/poc-helmchart.git
     needs: [env_workflow,Helm_Build_Chart,Package_Versioning] 
@@ -127,9 +125,16 @@ jobs:
       AKS_RESOURCE_GROUP: ${{needs.env_workflow.outputs.AKS_RESOURCE_GROUP}}
       AKS_NAME: ${{needs.env_workflow.outputs.AKS_NAME}}
       AZURE_STORAGE_ACC_NAME: ${{needs.env_workflow.outputs.BLOB_STORAGE_ACC}}
-    secrets: #inherit
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   
+  Git_Push_Version:
+    needs: [env_workflow,Deploy_helm,Package_Versioning]
+    name: "Pushing git Version"
+    uses: MuZikZz-Org/action-workflow/.github/workflows/git-push-version.yaml@main
+    with:
+      APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
+      Runtime: java 
+      SourceCodeBranch: ${{github.ref_name}}
+
   Git_tag:
     needs: [Deploy_helm,Package_Versioning]
     name: "Pushing git tag"
@@ -138,7 +143,7 @@ jobs:
       APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
       
   Create_PR:
-    needs: Deploy_helm
+    needs: [Deploy_helm,Git_Push_Version,Git_Tag]
     name: create pull reauest to main branch
     uses: MuZikZz-Org/action-workflow/.github/workflows/create-pullrequest.yaml@main
     with:
@@ -161,5 +166,3 @@ jobs:
   #     AKS_NAME: ${{needs.env_workflow.outputs.AKS_NAME}}
   #     AZURE_STORAGE_ACC_NAME: ${{needs.env_workflow.outputs.BLOB_STORAGE_ACC}}
   #     PR_NUMBER: ${{ needs.Create_PR.outputs.PR_NUMBER }}
-  #   secrets: #inherit
-  #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
