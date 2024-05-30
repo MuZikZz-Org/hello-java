@@ -75,7 +75,7 @@ jobs:
     uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
 
   Build_Docker_ACR:
-    needs: [env_workflow,Maven_Build]
+    needs: [env_workflow,Maven_Build,Package_Versioning]
     name: "Build Docker to ACR"
     uses: MuZikZz-Org/action-workflow/.github/workflows/docker-build-acr.yaml@main
     with:
@@ -108,7 +108,7 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
  
   Deploy_helm:  ## now use Helm values form https://github.com/brightza008/poc-helmchart.git
-    needs: [env_workflow,Helm_Build_Chart] 
+    needs: [env_workflow,Helm_Build_Chart,Package_Versioning] 
     name: "Helm deploy to AKS"
     uses: MuZikZz-Org/action-workflow/.github/workflows/helm-aks.yaml@main
     with:
@@ -125,7 +125,7 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   
   Git_tag:
-    needs: Deploy_helm
+    needs: [Deploy_helm,Package_Versioning]
     name: "Pushing git tag"
     uses: MuZikZz-Org/action-workflow/.github/workflows/git-push-tag.yaml@main
     with:
