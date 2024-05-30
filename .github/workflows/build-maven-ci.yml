@@ -76,7 +76,7 @@ jobs:
     name: Build Maven Package
     uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
     with: 
-      workspace: ${{ env.WORKSPACE }}
+      workspace: ${{ env.workspace }}
 
   Build_Docker_ACR:
     needs: [env_workflow,Maven_Build,Package_Versioning]
