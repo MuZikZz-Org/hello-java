@@ -26,6 +26,8 @@ env:
     # AKS
     AKS_RESOURCE_GROUP: ${{ fromJson(vars.JSON).AKS_RESOURCE_GROUP }}
     AKS_NAME: ${{ fromJson(vars.JSON).AKS_NAME }}
+    ## Define Workspace
+    WORKSPACE: "shared-workspace"
 
 jobs:
   env_workflow:
@@ -73,12 +75,15 @@ jobs:
     needs: Package_Versioning
     name: Build Maven Package
     uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
+    with: 
+      workspace: ${{ env.WORKSPACE }}
 
   Build_Docker_ACR:
     needs: [env_workflow,Maven_Build,Package_Versioning]
     name: "Build Docker to ACR"
     uses: MuZikZz-Org/action-workflow/.github/workflows/docker-build-acr.yaml@main
     with:
+      workspace: ${{ env.workspace }}
       APP_NAME: ${{needs.env_workflow.outputs.PackageName}}
       APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
       AZ_CONTAINER_REGISTRY: ${{needs.env_workflow.outputs.AZ_CONTAINER_REGISTRY}}
@@ -94,7 +99,7 @@ jobs:
           echo ${{ needs.Build_Docker_ACR.outputs.PACKAGE_VERSION }}
     
   Helm_Build_Chart: 
-    needs: [env_workflow,Build_Docker_ACR]
+    needs: [env_workflow,Build_Docker_ACR,Package_Versioning]
     name: "Helm Build Chart to Blob storage"
     uses: MuZikZz-Org/action-workflow/.github/workflows/helm-build-chart.yaml@main
     with:
