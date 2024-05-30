@@ -26,8 +26,7 @@ env:
     # AKS
     AKS_RESOURCE_GROUP: ${{ fromJson(vars.JSON).AKS_RESOURCE_GROUP }}
     AKS_NAME: ${{ fromJson(vars.JSON).AKS_NAME }}
-    ## Define Workspace
-    workspace: "shared-workspace"
+
 
 jobs:
   env_workflow:
@@ -51,6 +50,10 @@ jobs:
     steps:
       - run: |
           echo "preparing output env"
+          
+      - name: Define workspace
+        id: define-workspace
+        run: echo "workspace=shared-workspace" >> $GITHUB_ENV
 
   Az_login_managed_iden: 
     name: "Calling workflow Azure login with managed identity"
