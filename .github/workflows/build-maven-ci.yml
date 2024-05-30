@@ -1,4 +1,4 @@
-name: FeatureBranch Workflow Nodejs.
+name: FeatureBranch Workflow Java Maven.
 
 on:
   workflow_dispatch:
@@ -70,12 +70,12 @@ jobs:
           echo "Package Output form Workflow PackageVersioning: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }}"
           
   Maven_Build:
-    needs: env_workflow
+    needs: Package_Versioning
     name: Build Maven Package
     uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
 
   Build_Docker_ACR:
-    needs: [env_workflow,Package_Versioning]
+    needs: [Package_Versioning]
     name: "Build Docker to ACR"
     uses: MuZikZz-Org/action-workflow/.github/workflows/docker-build-acr.yaml@main
     with:
