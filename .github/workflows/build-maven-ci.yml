@@ -113,7 +113,7 @@ jobs:
       APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
  
   Deploy_helm:  ## now use Helm values form https://github.com/brightza008/poc-helmchart.git
-  if: github.event.pull_request.merged != true
+    if: github.event.pull_request.merged != true
     needs: [env_workflow,Helm_Build_Chart,Package_Versioning] 
     name: "Helm deploy to AKS"
     uses: MuZikZz-Org/action-workflow/.github/workflows/helm-aks.yaml@main
