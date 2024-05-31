@@ -156,13 +156,12 @@ jobs:
       SourceCodeBranch: ${{github.ref_name}}
 
 
-      Clean_Namespace:
-        # If Merged
-        if: github.event.pull_request.merged
-        needs: env_workflow
-        name: Clean up feature namespace after mearge
-        uses: MuZikZz-Org/action-workflow/.github/workflows/clean-namespace.yaml@main
-        with:
-          AKS_RESOURCE_GROUP: ${{needs.env_workflow.outputs.AKS_RESOURCE_GROUP}}
-          AKS_NAME: ${{needs.env_workflow.outputs.AKS_NAME}}
-    
+  Clean_Namespace:
+    # If Merged
+    if: github.event.pull_request.merged
+    needs: env_workflow
+    name: Clean up feature namespace after mearge
+    uses: MuZikZz-Org/action-workflow/.github/workflows/clean-namespace.yaml@main
+    with:
+      AKS_RESOURCE_GROUP: ${{needs.env_workflow.outputs.AKS_RESOURCE_GROUP}}
+      AKS_NAME: ${{needs.env_workflow.outputs.AKS_NAME}}
