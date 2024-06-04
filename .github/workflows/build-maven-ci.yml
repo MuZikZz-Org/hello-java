@@ -151,6 +151,7 @@ jobs:
       AZURE_CONTAINER_NAME: ${{needs.env_workflow.outputs.BLOB_CONTAINER_NAME}}
       APP_NAME: ${{github.event.repository.name}}
       APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
+      workspace: ${{needs.env_workflow.outputs.Workspace_Dir}}
  
   Deploy_helm:  ## now use Helm values form https://github.com/brightza008/poc-helmchart.git
     if: github.event.pull_request.merged != true
@@ -167,6 +168,7 @@ jobs:
       AKS_RESOURCE_GROUP: ${{needs.env_workflow.outputs.AKS_RESOURCE_GROUP}}
       AKS_NAME: ${{needs.env_workflow.outputs.AKS_NAME}}
       AZURE_STORAGE_ACC_NAME: ${{needs.env_workflow.outputs.BLOB_STORAGE_ACC}}
+      workspace: ${{needs.env_workflow.outputs.Workspace_Dir}}
   
   Git_Push_Version:
     if: github.event.pull_request.merged != true
