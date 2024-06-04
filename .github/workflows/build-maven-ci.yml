@@ -12,7 +12,7 @@ on:
       - closed 
 
 env: 
-    JobEnvironment: "feature-branch"
+    JobEnvironment: "sit"
     PackageName: ${{github.event.repository.name}}
     # ACR
     AZ_CONTAINER_REGISTRY: ${{ fromJson(vars.JSON).AZ_CONTAINER_REGISTRY }}
