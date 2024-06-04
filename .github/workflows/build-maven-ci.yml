@@ -102,7 +102,7 @@ jobs:
 
   Package_Versioning:
     if: github.event.pull_request.merged != true
-    needs: env_workflow
+    needs: [Checkout,env_workflow]
     name: Package versioning
     uses: MuZikZz-Org/action-workflow/.github/workflows/package-versioning.yaml@main
     with:
@@ -120,7 +120,7 @@ jobs:
           
   Maven_Build:
     if: github.event.pull_request.merged != true
-    needs: [env_workflow,Package_Versioning]
+    needs: [Checkout,env_workflow,Package_Versioning]
     name: Build Maven Package
     uses: MuZikZz-Org/action-workflow/.github/workflows/maven-build.yaml@main
     with: 
