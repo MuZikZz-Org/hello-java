@@ -148,7 +148,6 @@ jobs:
     name: "Helm Build Chart to Blob storage"
     uses: MuZikZz-Org/action-workflow/.github/workflows/helm-build-chart.yaml@main
     with:
-      Project: ${{needs.env_workflow.outputs.Project}}
       HELM_TEMPLATE_REPO: ${{needs.env_workflow.outputs.HELM_TEMPLATE_REPO}}
       HELM_TEMPLATE_BRANCH: ${{needs.env_workflow.outputs.HELM_TEMPLATE_BRANCH}}
       AZURE_STORAGE_ACC_NAME: ${{needs.env_workflow.outputs.BLOB_STORAGE_ACC}}
