@@ -7,7 +7,7 @@
     <groupId>com.mkyong.web</groupId>
     <artifactId>hello-java</artifactId>
     <packaging>war</packaging>
-    <version>0.1.5</version>
+    <version>0.1.6</version>
     <name>hello-java Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <properties>
