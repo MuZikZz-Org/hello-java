@@ -12,6 +12,7 @@ on:
       - closed 
 
 env: 
+    Project: "mpay-modernization"
     JobEnvironment: "feature-branch"
     PackageName: ${{github.event.repository.name}}
     # ACR
@@ -40,6 +41,7 @@ jobs:
     outputs: 
       user: ${{env.docker_user}}
       pass: ${{env.docker_password}}
+      Project: ${{env.Project}}
       JobEnvironment: ${{env.JobEnvironment}}
       PackageName: ${{env.PackageName}}
       AZ_CONTAINER_REGISTRY: ${{env.AZ_CONTAINER_REGISTRY}}
@@ -132,6 +134,7 @@ jobs:
     name: "Build Docker to ACR"
     uses: MuZikZz-Org/action-workflow/.github/workflows/docker-build-acr.yaml@main
     with:
+      Project: ${{needs.env_workflow.outputs.Project}}
       workspace: ${{needs.env_workflow.outputs.Workspace_Dir}}
       APP_NAME: ${{needs.env_workflow.outputs.PackageName}}
       APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
@@ -145,6 +148,7 @@ jobs:
     name: "Helm Build Chart to Blob storage"
     uses: MuZikZz-Org/action-workflow/.github/workflows/helm-build-chart.yaml@main
     with:
+      Project: ${{needs.env_workflow.outputs.Project}}
       HELM_TEMPLATE_REPO: ${{needs.env_workflow.outputs.HELM_TEMPLATE_REPO}}
       HELM_TEMPLATE_BRANCH: ${{needs.env_workflow.outputs.HELM_TEMPLATE_BRANCH}}
       AZURE_STORAGE_ACC_NAME: ${{needs.env_workflow.outputs.BLOB_STORAGE_ACC}}
@@ -159,6 +163,7 @@ jobs:
     name: "Helm deploy to AKS"
     uses: MuZikZz-Org/action-workflow/.github/workflows/helm-aks.yaml@main
     with:
+      Project: ${{needs.env_workflow.outputs.Project}}
       JobEnvironment: ${{needs.env_workflow.outputs.JobEnvironment}}  #feature-branch
       SourceCodeBranch: ${{github.ref_name}}  #feature/test/1
       APP_NAME: ${{github.event.repository.name}}
@@ -180,17 +185,17 @@ jobs:
       Runtime: java 
       SourceCodeBranch: ${{github.ref_name}}
 
-  Git_Tag:
-    if: github.event.pull_request.merged != true
-    needs: [Deploy_helm,Package_Versioning]
-    name: "Pushing git tag"
-    uses: MuZikZz-Org/action-workflow/.github/workflows/git-push-tag.yaml@main
-    with:
-      APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
+  # Git_Tag:
+  #   if: github.event.pull_request.merged != true
+  #   needs: [Deploy_helm,Package_Versioning]
+  #   name: "Pushing git tag"
+  #   uses: MuZikZz-Org/action-workflow/.github/workflows/git-push-tag.yaml@main
+  #   with:
+  #     APP_VERSION: ${{ needs.Package_Versioning.outputs.PACKAGE_VERSION_JAVA }} # use the output (app version) from package-versioning.yaml
       
   Create_PR:
     if: github.event.pull_request.merged != true
-    needs: [Deploy_helm,Git_Push_Version,Git_Tag]
+    needs: [Deploy_helm,Git_Push_Version]
     name: create pull reauest to main branch
     uses: MuZikZz-Org/action-workflow/.github/workflows/create-pullrequest.yaml@main
     with:
@@ -205,5 +210,6 @@ jobs:
     name: Clean up feature namespace after mearge
     uses: MuZikZz-Org/action-workflow/.github/workflows/clean-namespace.yaml@main
     with:
+      Project: ${{needs.env_workflow.outputs.Project}}
       AKS_RESOURCE_GROUP: ${{needs.env_workflow.outputs.AKS_RESOURCE_GROUP}}
       AKS_NAME: ${{needs.env_workflow.outputs.AKS_NAME}}
