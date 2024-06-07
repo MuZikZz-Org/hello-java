@@ -2,6 +2,9 @@ name: FeatureBranch Workflow Java Maven.
 
 on:
   workflow_dispatch:
+  create:
+    branches:
+      - 'feature/**'
   push:
     branches: #[ $default-branch ]
       - 'feature/**'
@@ -10,6 +13,7 @@ on:
   pull_request:
     types:
       - closed 
+      
 
 env: 
     Project: "mpay-modernization"
