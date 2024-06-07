@@ -22,4 +22,4 @@ java -cp target/hello-java-1.0-SNAPSHOT.jar com.mycompany.app.App
 ## clean up
 ```
 mvn clean
-```
+``` 
